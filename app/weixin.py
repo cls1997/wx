@@ -10,7 +10,7 @@ def handle_post():
 
 
 @weixin.route("/", methods=['GET'])
-def handleparams():
+def handle_get():
     params = request.args
     signature = params.get("signature", None)
     timestamp = params.get("timestamp", None)

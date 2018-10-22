@@ -4,7 +4,7 @@ from git import Repo
 webhook = Blueprint('webhook', __name__, url_prefix='/github')
 
 
-@webhook.route('/', methods=['POST'])
+@webhook.route('', methods=['POST'])
 def handle_github_hook():
     """ Entry point for github webhook """
     signature = request.headers.get('X-Hub-Signature')
