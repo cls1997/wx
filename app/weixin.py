@@ -1,7 +1,7 @@
 from flask import Blueprint, current_app, request, jsonify
 import hashlib
 
-weixin = Blueprint('weixin', __name__, url_prefix='/')
+weixin = Blueprint('weixin', __name__, url_prefix='/wechat')
 
 
 @weixin.route("/", methods=['POST'])
