@@ -1,2 +1,2 @@
 #!/bin/bash
-authbind gunicorn -c ./gunicorn.conf.py
+authbind gunicorn wsgi:application -c ./gunicorn.conf.py
