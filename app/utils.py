@@ -9,4 +9,4 @@ class WechatMessageBuilder:
     pass
 
 class WechatMessage:
-    
+    pass
