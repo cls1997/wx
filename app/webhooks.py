@@ -14,6 +14,8 @@ def handle_github_hook():
     if hmac.compare_digest(hashhex, signature):
         repo = Repo(current_app.config.get('REPO_PATH'))
         origin = repo.remotes.origin
+        origin.fetch("--all")
+        orin
         origin.pull('--rebase')
         commit = request.json['after'][0:6]
         print('Repository updated with commit {}'.format(commit))
