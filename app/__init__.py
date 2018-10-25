@@ -1,28 +1,25 @@
 from flask import Flask
-from .base import MyResponse
-from .weixin import weixin
-from .webhooks import webhook
 import os 
 
 
 def create_app():
-    from logging.config import dictConfig
+    # from logging.config import dictConfig
 
-    dictConfig({
-        'version': 1,
-        'formatters': {'default': {
-            'format': '[%(asctime)s] %(levelname)s in %(module)s: %(message)s',
-        }},
-        'handlers': {'wsgi': {
-            'class': 'logging.StreamHandler',
-            'stream': 'ext://flask.logging.wsgi_errors_stream',
-            'formatter': 'default'
-        }},
-        'root': {
-            'level': 'INFO',
-            'handlers': ['wsgi']
-        }
-    })
+    # dictConfig({
+    #     'version': 1,
+    #     'formatters': {'default': {
+    #         'format': '[%(asctime)s] %(levelname)s in %(module)s: %(message)s',
+    #     }},
+    #     'handlers': {'wsgi': {
+    #         'class': 'logging.StreamHandler',
+    #         'stream': 'ext://flask.logging.wsgi_errors_stream',
+    #         'formatter': 'default'
+    #     }},
+    #     'root': {
+    #         'level': 'INFO',
+    #         'handlers': ['wsgi']
+    #     }
+    # })
 
 
 
@@ -30,16 +27,18 @@ def create_app():
     app.config['GITHUB_SECRET'] = os.environ.get('GITHUB_SECRET')
     app.config['REPO_PATH'] = os.environ.get('REPO_PATH')
 
+    from .base import MyResponse
     app.response_class = MyResponse
 
-    from .weixin import WechatMessageHandler
-    app.wechat = WechatMessageHandler(
+    from .wechat import WechatAPI
+    app.wechat = WechatAPI(
         os.environ.get("WECHAT_TOKEN"),
         os.environ.get("WECHAT_APP_SECRET"),
         app
         )
 
-
-    app.register_blueprint(weixin)
-    app.register_blueprint(webhook)
+    
+    from .controller import wechat,github
+    app.register_blueprint(wechat)
+    app.register_blueprint(github)
     return app
