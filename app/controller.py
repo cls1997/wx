@@ -1,7 +1,8 @@
 import hashlib
 import hmac
 
-from flask import Blueprint, current_app, jsonify, request
+from flask import Blueprint, Response
+from flask import current_app, jsonify, request
 from git import Repo
 
 github = Blueprint('webhook', __name__, url_prefix='/github')
@@ -11,7 +12,8 @@ wechat = Blueprint('wechat', __name__, url_prefix='/wechat')
 @wechat.route("", methods=['POST'])
 def handle_post():
     post_data = request.data.decode(encoding="utf-8", errors="strict")
-    return current_app.wechat.handle_message(post_data)
+    return Response(current_app.wechat.handle_message(post_data),
+                    mimetype='application/xml')
 
 
 @wechat.route("", methods=['GET'])
@@ -27,6 +29,8 @@ def handle_get():
 
     if(current_app.debug):
         return "DEBUG"
+    else:
+        return ""
 
 
 @github.route('', methods=['POST'])

@@ -42,9 +42,6 @@ def create_app():
     app.config['GITHUB_SECRET'] = os.environ.get('GITHUB_SECRET')
     app.config['REPO_PATH'] = os.environ.get('REPO_PATH')
 
-    from .base import MyResponse
-    app.response_class = MyResponse
-
     from .wechat import WechatAPI
     app.wechat = WechatAPI(
         os.environ.get("WECHAT_TOKEN"),
