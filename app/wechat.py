@@ -1,6 +1,9 @@
 import hashlib
+import logging
 
-from .utils import build_wechat_message, parse_wechat_message
+from enum import Enum, auto
+from app.wechatmessage import build_wechat_message, parse_wechat_message, ReplyFactory
+
 
 class WechatAPI:
     def __init__(self, token, app_secret, app):
@@ -8,9 +11,10 @@ class WechatAPI:
         self.__app_secret = app_secret
         self.__app = app
         self.__handlers = {}
+        self.logger = logging.getLogger("WechatAPI")
 
     def register_handler(self, handler):
-        pass
+        self.logger.info("%s has registered.")
 
     def check_signature(self, signature, timestamp, nonce):
         if not signature or not timestamp or not nonce:
@@ -25,8 +29,25 @@ class WechatAPI:
         return True
 
     def handle_message(self, msg):
-        root = parse_wechat_message(msg)
-        return build_wechat_message(root).decode(encoding="utf-8", errors="strict")
+        """
 
-    def send_message(self, msg):
+        """
+        try:
+            self.logger.debug("Message before parsing: {}" .format(msg))
+            msg_id, msg = parse_wechat_message(msg)
+            self.logger.debug(
+                "Message parsed.Type {}, Id {}".format(type(msg), msg_id))
+        except RuntimeError:
+            self.logger.exception("Processing: {}".format(msg))
+        finally:
+            self.logger.debug("Message parsing over.")
+            
+        #TODO Message Handlers
+        response = ReplyFactory(msg)
+        response = response.render(**{"content": "QWEQWE"})
+
+        self.logger.debug(response)
+        return build_wechat_message(response)
+
+    def reply(self, request, response_type="text", **kwargs):
         pass

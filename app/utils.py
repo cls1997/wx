@@ -23,13 +23,22 @@ def _serialize_xml(write, elem, qnames, namespaces,
                                          short_empty_elements, **kwargs)
 
 
+def __etree_to_dict(elem):
+    if len(elem) != 0:
+        d = {}
+
+        for e in list(elem):
+            k, v = __etree_to_dict(e)
+            d[k] = v
+            if (k == "CDATA"):
+                return (elem.tag, v)
+        return (elem.tag, d)
+    else:
+        return (elem.tag, elem.text)
+
+
+def etree_to_dict(elem):
+    return __etree_to_dict(elem)[1]
+
+
 etree._serialize_xml = etree._serialize['xml'] = _serialize_xml
-
-
-def parse_wechat_message(xml):
-    return etree.fromstring(xml)
-
-
-def build_wechat_message(root):
-    tree =  etree.ElementTree(root)
-    return etree.tostring(root)
