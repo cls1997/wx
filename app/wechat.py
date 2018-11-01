@@ -33,15 +33,15 @@ class WechatAPI:
 
         """
         try:
-            self.logger.debug("Message before parsing: {}" .format(msg))
+            self.logger.info("Message before parsing: {}" .format(msg))
             msg_id, msg = parse_wechat_message(msg)
-            self.logger.debug(
+            self.logger.info(
                 "Message parsed.Type {}, Id {}".format(type(msg), msg_id))
         except RuntimeError:
             self.logger.exception("Processing: {}".format(msg))
         finally:
             self.logger.debug("Message parsing over.")
-            
+
         #TODO Message Handlers
         response = ReplyFactory(msg)
         response = response.render(**{"content": "QWEQWE"})
