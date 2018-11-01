@@ -39,6 +39,7 @@ class WechatAPI:
                 "Message parsed.Type {}, Id {}".format(type(msg), msg_id))
         except RuntimeError:
             self.logger.exception("Processing: {}".format(msg))
+            return ""
         finally:
             self.logger.debug("Message parsing over.")
 
@@ -48,6 +49,3 @@ class WechatAPI:
 
         self.logger.debug(response)
         return build_wechat_message(response)
-
-    def reply(self, request, response_type="text", **kwargs):
-        pass

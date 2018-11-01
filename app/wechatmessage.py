@@ -181,15 +181,18 @@ def parse_wechat_message(xml):
     """
     """
     from app.utils import etree, etree_to_dict
-    logger.debug("Msg could parse - Msg: %s / Event: %s", msg_mapping, event_mapping)
+    logger.debug("Msg could parse - Msg: %s / Event: %s",
+                 msg_mapping, event_mapping)
     xml = etree_to_dict(etree.fromstring(xml))
     msg_id = xml["MsgId"]
     msg_type = xml["MsgType"]
     if msg_type == "event":
         msg = event_mapping["EventKey"]
     else:
-        msg = msg_mapping[msg_type](**xml)
-
+        try:
+            msg = msg_mapping[msg_type](**xml)
+        except KeyError:
+            raise RuntimeError("Unsupported Message. %s",msg_type)
     return msg_id, msg
 
 
