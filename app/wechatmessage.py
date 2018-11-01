@@ -184,7 +184,6 @@ def parse_wechat_message(xml):
     logger.debug("Msg could parse - Msg: %s / Event: %s",
                  msg_mapping, event_mapping)
     xml = etree_to_dict(etree.fromstring(xml))
-    msg_id = xml["MsgId"]
     msg_type = xml["MsgType"]
     if msg_type == "event":
         msg = event_mapping["EventKey"]
@@ -193,7 +192,7 @@ def parse_wechat_message(xml):
             msg = msg_mapping[msg_type](**xml)
         except KeyError:
             raise RuntimeError("Unsupported Message. %s",msg_type)
-    return msg_id, msg
+    return msg
 
 
 def build_wechat_message(wechat_message):
