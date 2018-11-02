@@ -241,27 +241,22 @@ def build_wechat_reply(msg, msg_type, response):
     reply_generator = reply_mapping[msg_type]
 
     logger.debug("Reply rendering. args: %s", response)
-
     response["ToUserName"] = msg.from_user_name
     response["FromUserName"] = msg.to_user_name
     response["CreateTime"] = int(time.time())
     response["MsgType"] = msg_type
+
     accept_key = []
     accept_key.extend([v.name for v in reply_generator.__data__.values()])
     accept_key.extend([k for k in reply_generator.__data__.keys()])
-    print(accept_key)
     tmp_key = [k for k in response.keys()]
     for k in tmp_key:
         if k not in accept_key:
             response.pop(k)
 
-    logger.debug("Reply rendering. args: %s", response)
-
     for v in reply_generator.__data__.values():
         if v.name not in response.keys():
             response[v.name] = None
-
-    logger.debug("Reply rendering. args: %s", response)
 
     wechat_message = reply_generator(**response)
 
