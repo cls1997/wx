@@ -14,7 +14,7 @@ def respond(msg):
         "location": "{},{}".format(msg.location_x, msg.location_y),
         "coord_type": "wgs84",
         "timestamp": int(time.time()),
-        "ak": "D83b70d1f9d39d9998d6cc544b27a55b"
+        "ak": "ivTL8OfP0G8gOeUYaMSP9SHfuXcxKfDX"
     }
 
     r = requests.get(url, params)
