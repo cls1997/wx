@@ -9,10 +9,11 @@ def respond(msg):
     import time
     import requests
 
-    url = "http://api.map.baidu.com/timezone/v1"
+    url = "http://api.map.baidu.com/timezone/v1?location={},{}".format(
+        msg.location_x, msg.location_y)
+    # make comma dont encode 
     params = {
-        "location": "{},{}".format(msg.location_x, msg.location_y),
-        "coord_type": "wgs84",
+        "coord_type": "wgs84ll",
         "timestamp": int(time.time()),
         "ak": "ivTL8OfP0G8gOeUYaMSP9SHfuXcxKfDX"
     }

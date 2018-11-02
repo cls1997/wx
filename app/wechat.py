@@ -2,8 +2,7 @@ import hashlib
 import logging
 import time
 
-from app.wechatmessage import (ReplyFactory, build_wechat_message,
-                               parse_wechat_message)
+from app.wechatmessage import build_wechat_reply,parse_wechat_message
 import app.handlers
 
 
@@ -73,7 +72,7 @@ class WechatAPI:
         response = self.make_response(msg)
 
         self.logger.debug(response)
-        return build_wechat_message(response)
+        return response
 
     def make_response(self, msg):
         # TODO stupid code
@@ -84,8 +83,8 @@ class WechatAPI:
             if handler.test(msg):
                 msg_type, response = handler.respond(msg)
 
-        response = ReplyFactory(msg,
-                                msg_type= msg_type).render_rep(**response)
+        response = build_wechat_reply(msg, msg_type, response)
+
         self.logger.info("It spent %dms to make this response.",
                          int((time.time()-start)*1000))
         return response or ""

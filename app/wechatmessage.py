@@ -184,8 +184,9 @@ class SubscribeEvent(BaseEvent):
 class UnsubscribeEvent(BaseEvent):
     pass
 
+
 @register_event("click")
-class UnsubscribeEvent(BaseEvent):
+class ClickEvent(BaseEvent):
     pass
 
 
@@ -215,36 +216,6 @@ class MusicReply(BaseReply):
     thumb_media_id = StringField("ThumbMediaId")
 
 
-class ReplyFactory:
-    def __init__(self, msg, msg_type="text"):
-        self.__msg = msg
-        self.__rep = reply_mapping[msg_type]
-        self.__render = {"MsgType": msg_type}
-
-    def render_rep(self, **args):
-        import time
-
-        logger.debug("Reply rendering. args: %s", args)
-
-        self.__render["ToUserName"] = self.__msg.from_user_name
-        self.__render["FromUserName"] = self.__msg.to_user_name
-        self.__render["CreateTime"] = int(time.time())
-
-        for k, v in self.__rep.__data__.items():
-            if k in args.keys():
-                self.__render[v.name] = args[k]
-                break
-            elif v.name in args.keys():
-                self.__render[v.name] = args[v.name]
-
-        for v in self.__rep.__data__.values():
-            if v.name not in self.__render.keys():
-                self.__render[v.name] = None
-
-        logger.debug("Reply rendering. __render: %s", self.__render)
-        return self.__rep(**self.__render)
-
-
 def parse_wechat_message(xml):
     """
     """
@@ -263,7 +234,36 @@ def parse_wechat_message(xml):
     return msg
 
 
-def build_wechat_message(wechat_message):
+def build_wechat_reply(msg, msg_type, response):
+    import time
     from app.utils import etree
+
+    reply_generator = reply_mapping[msg_type]
+
+    logger.debug("Reply rendering. args: %s", response)
+
+    response["ToUserName"] = msg.from_user_name
+    response["FromUserName"] = msg.to_user_name
+    response["CreateTime"] = int(time.time())
+    response["MsgType"] = msg_type
+    accept_key = []
+    accept_key.extend([v.name for v in reply_generator.__data__.values()])
+    accept_key.extend([k for k in reply_generator.__data__.keys()])
+    print(accept_key)
+    tmp_key = [k for k in response.keys()]
+    for k in tmp_key:
+        if k not in accept_key:
+            response.pop(k)
+
+    logger.debug("Reply rendering. args: %s", response)
+
+    for v in reply_generator.__data__.values():
+        if v.name not in response.keys():
+            response[v.name] = None
+
+    logger.debug("Reply rendering. args: %s", response)
+
+    wechat_message = reply_generator(**response)
+
     root = wechat_message.serialize()
     return etree.tostring(root, encoding="utf-8")
