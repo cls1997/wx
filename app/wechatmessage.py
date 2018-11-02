@@ -43,8 +43,8 @@ class WechatMessageMetaclass(type):
                 tmp_attrs.update(copy.deepcopy(base.__data__))
         for k, v in tmp_attrs.items():
             if isinstance(v, Field):
-                logger.debug(
-                    'Found Field {}: {} ==> {}'.format(name, k, v))
+                # logger.debug(
+                #     'Found Field {}: {} ==> {}'.format(name, k, v))
                 data[k] = v
                 if k in attrs:
                     attrs.pop(k)
@@ -65,7 +65,6 @@ class WechatMessage(dict, metaclass=WechatMessageMetaclass):
         if len(args) != len(self.data):
             raise TypeError("{} takes exactly {} argument ({} given)".format(
                 self.__class__.__name__, len(self.data), len(args)))
-        # TODO ???
         for k, v in self.data.items():
             try:
                 self[k] = args[v.name]
@@ -120,15 +119,11 @@ class BaseReply(WechatMessage):
     create_time = IntegerField("CreateTime")
     msg_type = StringField("MsgType")
 
-    def render(self, **args):
-        for k, v in args:
-            self[k] = v
-
     def serialize(self):
         from app.utils import etree
         root = etree.Element("xml")
         for v in self.data.values():
-            if isinstance(v, Field):
+            if isinstance(v, Field) and self[v.name]:
                 root.append(
                     v.get_element(self[v.name])
                 )
@@ -141,8 +136,56 @@ class TextMessage(BaseMessage):
     content = StringField("Content")
 
 
+@register_msg("image")
+class ImageMessage(BaseMessage):
+    media_id = StringField("MediaId")
+    pic_url = StringField("PicUrl")
+
+
+@register_msg("voice")
+class VoiceMessage(BaseMessage):
+    media_id = StringField("MediaId")
+    format = StringField("Format")
+
+
+@register_msg("video")
+class VideoMessage(BaseMessage):
+    media_id = StringField("MediaId")
+    thumb_media_id = StringField("ThumbMediaId")
+
+
+@register_msg("shortvideo")
+class ShortVideoMessage(BaseMessage):
+    media_id = StringField("MediaId")
+    thumb_media_id = StringField("ThumbMediaId")
+
+
+@register_msg("location")
+class LocationMessage(BaseMessage):
+    location_x = IntegerField("Location_X")
+    location_y = IntegerField("Location_Y")
+    scale = IntegerField("Scale")
+    label = StringField("Label")
+
+
+@register_msg("link")
+class LinkMessage(BaseMessage):
+    title = StringField("Title")
+    description = StringField("Description")
+    url = StringField("Url")
+
+
 @register_event("subscribe")
 class SubscribeEvent(BaseEvent):
+    pass
+
+
+@register_event("unsubscribe")
+class UnsubscribeEvent(BaseEvent):
+    pass
+
+@register_event("click")
+class UnsubscribeEvent(BaseEvent):
     pass
 
 
@@ -151,13 +194,34 @@ class TextReply(BaseReply):
     content = StringField("Content")
 
 
+@register_reply("image")
+class ImageReply(BaseReply):
+    media_id = StringField("MediaId")
+
+
+@register_reply("voice")
+class VoiceReply(BaseReply):
+    media_id = StringField("MediaId")
+    title = StringField("Title")
+    description = StringField("Description")
+
+
+@register_reply("music")
+class MusicReply(BaseReply):
+    title = StringField("Title")
+    description = StringField("Description")
+    music_url = StringField("MusicURL")
+    hq_music_url = StringField("HQMusicUrl")
+    thumb_media_id = StringField("ThumbMediaId")
+
+
 class ReplyFactory:
     def __init__(self, msg, msg_type="text"):
         self.__msg = msg
         self.__rep = reply_mapping[msg_type]
         self.__render = {"MsgType": msg_type}
 
-    def render(self, **args):
+    def render_rep(self, **args):
         import time
 
         logger.debug("Reply rendering. args: %s", args)
@@ -172,6 +236,10 @@ class ReplyFactory:
                 break
             elif v.name in args.keys():
                 self.__render[v.name] = args[v.name]
+
+        for v in self.__rep.__data__.values():
+            if v.name not in self.__render.keys():
+                self.__render[v.name] = None
 
         logger.debug("Reply rendering. __render: %s", self.__render)
         return self.__rep(**self.__render)
@@ -191,7 +259,7 @@ def parse_wechat_message(xml):
         try:
             msg = msg_mapping[msg_type](**xml)
         except KeyError:
-            raise RuntimeError("Unsupported Message. %s",msg_type)
+            raise RuntimeError("Unsupported Message. %s", msg_type)
     return msg
 
 

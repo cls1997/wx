@@ -1,12 +1,25 @@
 import hashlib
 import hmac
+import time
 
 from flask import Blueprint, Response
-from flask import current_app, jsonify, request
+from flask import current_app, jsonify, request, g
 from git import Repo
 
 github = Blueprint('webhook', __name__, url_prefix='/github')
 wechat = Blueprint('wechat', __name__, url_prefix='/wechat')
+
+
+@wechat.before_request
+def before_request():
+    g.start_time = time.time()
+
+
+@wechat.teardown_request
+def teardown_request(exception = None):
+    diff = time.time() - g.start_time
+    current_app.logger.info(
+        "It spent %dms to handle this request.", int(1000*diff))
 
 
 @wechat.route("", methods=['POST'])
@@ -45,5 +58,5 @@ def handle_github_hook():
         origin = repo.remotes.origin
         origin.pull()
         commit = request.json['after'][0:6]
-        print('Repository updated with commit {}'.format(commit))
+        current_app.info('Repository updated with commit {}'.format(commit))
     return jsonify({}), 200
