@@ -1,8 +1,8 @@
 __name__ = 'repeater'
 
 
-def test(self, msg):
+def test(msg):
     return msg.msg_type == "text"
 
-def respond(self, msg):
+def respond(msg):
     return {"Content": msg.content}
