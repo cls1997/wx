@@ -16,7 +16,7 @@ def entity_create(wechat_user):
         "entity_name": wechat_user
     }
 
-    r = requests.post(url, json=json.dumps(datas))
+    r = requests.post(url, data=json.dumps(datas))
 
     return r.json()
 
@@ -30,8 +30,7 @@ def entity_list(wechat_user):
     }
 
     r = requests.get(url, "&".join('{}={}'.format(k, v)
-                                        for k, v in datas.items()))
-    print(r.url)
+                                   for k, v in datas.items()))
     return r.json()
 
 
@@ -47,6 +46,6 @@ def track_addpoint(wechat_user, latitude, longitude, loc_time):
         "coord_type_input": "wgs84"
     }
 
-    r = requests.post(url, json=json.dumps(datas))
+    r = requests.post(url, data=json.dumps(datas))
 
     return r.json()
