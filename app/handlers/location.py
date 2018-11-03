@@ -28,5 +28,6 @@ def respond(msg):
     if entity_list(wechat_user)['status'] == 3003:
         entity_create(wechat_user)
 
-    return track_addpoint(wechat_user, msg.location_x, msg.location_y, msg.create_time)
+    response = track_addpoint(wechat_user, msg.location_x, msg.location_y, msg.create_time)
+    return {"Content": response}
 
