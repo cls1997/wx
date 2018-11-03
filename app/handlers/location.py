@@ -11,7 +11,7 @@ def test(msg):
 
 #     url = "http://api.map.baidu.com/timezone/v1?location={},{}".format(
 #         msg.location_x, msg.location_y)
-#     # make comma dont encode 
+#     # make comma dont encode
 #     params = {
 #         "coord_type": "wgs84ll",
 #         "timestamp": int(time.time()),
@@ -28,6 +28,6 @@ def respond(msg):
     if entity_list(wechat_user)['status'] == 3003:
         entity_create(wechat_user)
 
-    response = track_addpoint(wechat_user, msg.location_x, msg.location_y, msg.create_time)
-    return {"Content": response}
-
+    response = track_addpoint(
+        wechat_user, msg.location_x, msg.location_y, msg.create_time)
+    return "text", {"Content": response}
