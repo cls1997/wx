@@ -2,8 +2,8 @@ import hashlib
 import logging
 import time
 
-from app.wechatmessage import build_wechat_reply,parse_wechat_message
 import app.handlers
+from app.wechatmessage import build_wechat_reply, parse_wechat_message
 
 
 class WechatAPI:

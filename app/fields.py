@@ -21,6 +21,15 @@ class IntegerField(Field):
         elem.text = str(text)
         return elem
 
+class FloatField(Field):
+    def __init__(self, name):
+        super().__init__(name, False)
+
+    def get_element(self, text):
+        elem = etree.Element(self.name)
+        elem.text = str(text)
+        return elem
+
 
 class StringField(Field):
     def __init__(self, name):

@@ -1,7 +1,7 @@
 import logging
 import copy
 
-from app.fields import Field, StringField, IntegerField
+from app.fields import Field, StringField, IntegerField, FloatField
 
 
 logger = logging.getLogger("WechatAPI")
@@ -110,7 +110,6 @@ class BaseEvent(WechatMessage):
     create_time = IntegerField("CreateTime")
     msg_type = StringField("MsgType")
     event = StringField("Event")
-    event_key = StringField("EventKey")
 
 
 class BaseReply(WechatMessage):
@@ -187,7 +186,14 @@ class UnsubscribeEvent(BaseEvent):
 
 @register_event("click")
 class ClickEvent(BaseEvent):
-    pass
+    event_key = StringField("EventKey")
+
+@register_event("LOCATION")
+class LocationEvent(BaseEvent):
+    latitude = FloatField("Latitude")
+    longitude = FloatField("Longitude")
+    precision = FloatField("Precision")
+
 
 
 @register_reply("text")
@@ -225,7 +231,7 @@ def parse_wechat_message(xml):
     xml = etree_to_dict(etree.fromstring(xml))
     msg_type = xml["MsgType"]
     if msg_type == "event":
-        msg = event_mapping["EventKey"]
+        msg = event_mapping["Event"]
     else:
         try:
             msg = msg_mapping[msg_type](**xml)
