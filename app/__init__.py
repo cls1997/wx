@@ -28,6 +28,7 @@ def create_app():
                     "{}/wechat.log".format(sys.path[0]))
                 .setFormatter(formatter)
             )
+            logger.setLevel(level)
 
     app.config['GITHUB_SECRET'] = os.environ.get('GITHUB_SECRET')
     app.config['REPO_PATH'] = os.environ.get('REPO_PATH')
