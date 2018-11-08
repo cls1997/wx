@@ -23,6 +23,7 @@ def create_app():
         if not app.debug:
             logger.addHandler(
                 logging.handlers.WatchedFileHandler("{}/wechat.log".format(sys.path[0]))
+                .setFormatter(formatter)
             )
             
 
