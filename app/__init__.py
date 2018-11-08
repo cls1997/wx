@@ -7,14 +7,14 @@ from flask import Flask
 
 def create_app():
     app = Flask(__name__)
-
     formatter = logging.Formatter(
-        '[%(asctime)s] %(levelname)s in %(module)s: %(message)s')
+        '[%(asctime)s] %(levelname)s in %(module)s: %(message)s'
+    )
     console_handler = logging.StreamHandler(sys.stdout)
     console_handler.setFormatter(formatter)
 
     loggers = ['root', 'flask.app']
-    level = logging.INFO if app.debug else logging.DEBUG
+    level = logging.INFO if not app.debug else logging.DEBUG
 
     for logger in loggers:
         logger = logging.getLogger(logger)
