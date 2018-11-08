@@ -1,3 +1,3 @@
-from app.api.baidueagle import entity_list
+import logging
 
-print(entity_list('123')['status']==200)
+print(logging.__file__)

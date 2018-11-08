@@ -1,6 +1,7 @@
 import os
 import sys
 import logging
+import logging.handlers
 
 from flask import Flask
 
@@ -18,17 +19,15 @@ def create_app():
     level = logging.INFO if not app.debug else logging.DEBUG
 
     for logger in loggers:
-        import logging.handlers
         logger = logging.getLogger(logger)
         logger.setLevel(level)
         logger.addHandler(console_handler)
         if not app.debug:
             logger.addHandler(
-                logging.handlers.WatchedFileHandler("{}/wechat.log".format(sys.path[0]))
+                logging.handlers.WatchedFileHandler(
+                    "{}/wechat.log".format(sys.path[0]))
                 .setFormatter(formatter)
             )
-            
-
 
     app.config['GITHUB_SECRET'] = os.environ.get('GITHUB_SECRET')
     app.config['REPO_PATH'] = os.environ.get('REPO_PATH')

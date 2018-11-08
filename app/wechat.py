@@ -39,7 +39,7 @@ class WechatAPI:
                 except Exception as e:
                     logging.warning('Fail to load handler %s\n %s %s',
                                     name, e, 'handlers.%s' % name)
-
+                                    
     def check_signature(self, signature, timestamp, nonce):
         if not signature or not timestamp or not nonce:
             return False
