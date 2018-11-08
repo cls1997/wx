@@ -4,7 +4,7 @@ import copy
 from app.fields import Field, StringField, IntegerField, FloatField
 
 
-logger = logging.getLogger("WechatAPI")
+logger = logging.getLogger("flask.app.WechatAPI")
 
 msg_mapping = {"event": None}
 event_mapping = {}
