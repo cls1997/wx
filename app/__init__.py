@@ -7,6 +7,7 @@ from flask import Flask
 
 def create_app():
     app = Flask(__name__)
+
     formatter = logging.Formatter(
         '[%(asctime)s] %(levelname)s in %(module)s: %(message)s'
     )
@@ -17,6 +18,7 @@ def create_app():
     level = logging.INFO if not app.debug else logging.DEBUG
 
     for logger in loggers:
+        import logging.handlers
         logger = logging.getLogger(logger)
         logger.setLevel(level)
         logger.addHandler(console_handler)
