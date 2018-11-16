@@ -33,14 +33,14 @@ def create_app():
     app.config['GITHUB_SECRET']=os.environ.get('GITHUB_SECRET')
     app.config['REPO_PATH']=os.environ.get('REPO_PATH')
 
-    from .wechat import WechatAPI
+    from app.wechat import WechatAPI
     app.wechat=WechatAPI(
         os.environ.get("WECHAT_TOKEN"),
         os.environ.get("WECHAT_APP_SECRET"),
         app
     )
 
-    from .controller import wechat, github
+    from app.controller import wechat, github
     app.register_blueprint(wechat)
     app.register_blueprint(github)
 
