@@ -22,12 +22,19 @@ def test(msg):
 
 #     return "text", {"Content": r.text}
 def respond(msg):
-    from app.api.baidueagle import entity_create, entity_list, track_addpoint
+    # from app.api.baidueagle import entity_create, entity_list, track_addpoint
 
-    wechat_user = msg.FromUserName
-    if entity_list(wechat_user)['status'] == 3003:
-        print(entity_create(wechat_user))
+    # wechat_user = msg.FromUserName
+    # if entity_list(wechat_user)['status'] == 3003:
+    #     print(entity_create(wechat_user))
 
-    response = track_addpoint(
-        wechat_user, msg.location_x, msg.location_y, msg.create_time)
-    return "text", {"Content": response}
+    # response = track_addpoint(
+    #     wechat_user, msg.location_x, msg.location_y, msg.create_time)
+
+    from app.api.wechat import upload_img
+    from app.api.baidulbs import get_image
+
+    img = get_image(msg.location_x,msg.location_y)
+    img = upload_img(img)
+
+    return "image", {"MediaId": img}
