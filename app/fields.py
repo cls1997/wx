@@ -42,7 +42,7 @@ class StringField(Field):
 
 class ImageField(Field):
     def __init__(self, name):
-        super().__init__(name, True)
+        super().__init__(name, False)
     
     def get_element(self,text):
         image = etree.Element("Image")
@@ -50,3 +50,25 @@ class ImageField(Field):
         elem.append(cdata(text))
         image.append(elem)
         return image
+
+class VoiceField(Field):
+    def __init__(self, name):
+        super().__init__(name, False)
+    
+    def get_element(self,text):
+        voice = etree.Element("Voice")
+        elem = etree.Element(self.name)
+        elem.append(cdata(text))
+        voice.append(elem)
+        return voice
+
+class VideoField(Field):
+    def __init__(self, name):
+        super().__init__(name, False)
+    
+    def get_element(self,text):
+        video = etree.Element("Video")
+        elem = etree.Element(self.name)
+        elem.append(cdata(text))
+        video.append(elem)
+        return video
