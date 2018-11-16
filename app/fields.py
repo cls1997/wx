@@ -39,3 +39,14 @@ class StringField(Field):
         elem = etree.Element(self.name)
         elem.append(cdata(text))
         return elem
+
+class ImageField(Field):
+    def __init__(self, name):
+        super().__init__(name, True)
+    
+    def get_element(self,text):
+        image = etree.Element("Image")
+        elem = etree.Element(self.name)
+        elem.append(cdata(text))
+        image.append(elem)
+        return image

@@ -1,7 +1,7 @@
 import logging
 import copy
 
-from app.fields import Field, StringField, IntegerField, FloatField
+from app.fields import Field, StringField, IntegerField, FloatField, ImageField
 
 
 logger = logging.getLogger("WechatAPI")
@@ -203,7 +203,7 @@ class TextReply(BaseReply):
 
 @register_reply("image")
 class ImageReply(BaseReply):
-    media_id = StringField("MediaId")
+    media_id = ImageField("MediaId")
 
 
 @register_reply("voice")
