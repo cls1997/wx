@@ -8,7 +8,6 @@ def cdata(text=None):
 
 
 etree = ET
-
 etree._original_serialize_xml = etree._serialize_xml
 
 

@@ -1,10 +1,13 @@
+
 import hashlib
 import logging
 import time
 
-import app.handlers
-from app.wechatmessage import build_wechat_reply, parse_wechat_message
+from .wechatmessage import build_wechat_reply, parse_wechat_message
+from .blueprint import wechat as wechat_blueprint
 
+
+import app.handlers
 
 class WechatAPI:
     logger = logging.getLogger("WechatAPI")
@@ -39,7 +42,7 @@ class WechatAPI:
                 except Exception as e:
                     logging.warning('Fail to load handler %s\n %s %s',
                                     name, e, 'handlers.%s' % name)
-                                    
+
     def check_signature(self, signature, timestamp, nonce):
         if not signature or not timestamp or not nonce:
             return False

@@ -30,18 +30,19 @@ def create_app():
             file_handler.setLevel(logging.INFO)
             logger.addHandler(file_handler)
 
-    app.config['GITHUB_SECRET']=os.environ.get('GITHUB_SECRET')
-    app.config['REPO_PATH']=os.environ.get('REPO_PATH')
+    app.config['GITHUB_SECRET'] = os.environ.get('GITHUB_SECRET')
+    app.config['REPO_PATH'] = os.environ.get('REPO_PATH')
 
     from app.wechat import WechatAPI
-    app.wechat=WechatAPI(
+    app.wechat = WechatAPI(
         os.environ.get("WECHAT_TOKEN"),
         os.environ.get("WECHAT_APP_SECRET"),
         app
     )
 
-    from app.controller import wechat, github
-    app.register_blueprint(wechat)
+    from app.wechat import wechat_blueprint
+    from app.github import github
+    app.register_blueprint(wechat_blueprint)
     app.register_blueprint(github)
 
     return app

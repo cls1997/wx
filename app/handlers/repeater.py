@@ -6,4 +6,4 @@ def test(msg):
 
 
 def respond(msg):
-    return "text", {"Content": msg.content+"q"}
+    return "text", {"Content": msg.content+"qw"}
