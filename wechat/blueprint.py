@@ -23,8 +23,9 @@ def teardown_request(exception=None):
 @wechat.route("", methods=['POST'])
 def handle_post():
     post_data = request.data.decode(encoding="utf-8", errors="strict")
-    return Response(current_app.wechat.handle_message(post_data),
-                    mimetype='application/xml')
+    reply = current_app.wechat.handle_message(post_data)
+    return current_app.response_class(reply.serialize(),
+                                      mimetype='application/xml')
 
 
 @wechat.route("", methods=['GET'])

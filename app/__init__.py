@@ -5,12 +5,14 @@ import logging.handlers
 
 from flask import Flask
 
+from app.extensions import wechat, db, redis
+
 
 def create_app():
     app = Flask(__name__)
 
     formatter = logging.Formatter(
-        '[%(asctime)s] {%(name)s} %(levelname)s in %(module)s: %(message)s'
+        '[%(asctime)s] {%(name)s} %(levelname)s in %(module)s:\n\t %(message)s'
     )
     level = logging.DEBUG
     console_handler = logging.StreamHandler(sys.stdout)
@@ -33,16 +35,21 @@ def create_app():
     app.config['GITHUB_SECRET'] = os.environ.get('GITHUB_SECRET')
     app.config['REPO_PATH'] = os.environ.get('REPO_PATH')
 
-    from app.wechat import WechatAPI
-    app.wechat = WechatAPI(
-        os.environ.get("WECHAT_TOKEN"),
-        os.environ.get("WECHAT_APP_SECRET"),
-        app
-    )
+    app.config['WECHAT_TOKEN'] = os.environ.get('WECHAT_TOKEN')
+    app.config['WECHAT_APPID'] = os.environ.get('WECHAT_APPID')
+    app.config['WECHAT_APP_SECRET'] = os.environ.get('WECHAT_APP_SECRET')
+    
+    configure_extensions(app)
 
-    from app.wechat import wechat_blueprint
     from app.github import github
-    app.register_blueprint(wechat_blueprint)
     app.register_blueprint(github)
 
     return app
+
+
+def configure_extensions(app):
+    db.init_app(app)
+    wechat.init_app(app)
+    redis.init_app(app)
+
+import app.wechat_handlers

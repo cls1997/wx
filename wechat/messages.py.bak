@@ -1,0 +1,80 @@
+import logging
+import copy
+
+from .fields import Field, StringField, IntegerField, FloatField, ImageField
+
+__all__ = ['WechatMessage', 'BaseMessage', 'BaseEvent', 'BaseReply', 'TextMessage',
+           'ImageMessage', 'VoiceMessage', 'VideoMessage', 'LocationMessage',
+           'ShortVideoMessage', 'LinkMessage', 'SubscribeEvent', 'UnsubscribeEvent',
+           'ClickEvent', 'LocationEvent', 'TextReply', 'ImageReply', 'VoiceReply',
+           'MusicReply', 'parse_wechat_message', 'create_reply']
+
+logger = logging.getLogger("WechatAPI")
+
+msg_mapping = {"event": None}
+event_mapping = {}
+reply_mapping = {}
+
+
+class WechatMessageMetaclass(type):
+    def __new__(cls, name, bases, attrs):
+        if name in ["WechatMessage", ]:
+            return type.__new__(cls, name, bases, attrs)
+        data = {}
+        tmp_attrs = copy.deepcopy(attrs)
+        for base in bases:
+            if hasattr(base, '__data__'):
+                tmp_attrs.update(copy.deepcopy(base.__data__))
+        for k, v in tmp_attrs.items():
+            if isinstance(v, Field):
+                # logger.debug(
+                #     'Found Field {}: {} ==> {}'.format(name, k, v))
+                data[k] = v
+                if k in attrs:
+                    attrs.pop(k)
+
+        logger.debug("Entity %s(%s)'s attributes: %s", name,
+                     cls, [k for k in data.keys()])
+        cls = type.__new__(cls, name, bases, attrs)
+        cls.__data__ = data
+        return cls
+
+
+class WechatMessage(dict, metaclass=WechatMessageMetaclass):
+    def __init__(self, **args):
+        logger.debug("Message initializing .%s %s %s", self.__class__,
+                     [v.name for v in self.data.values()],
+                     [v for v in args.values()]
+                     )
+        if len(args) != len(self.data):
+            raise TypeError("{} takes exactly {} argument ({} given)".format(
+                self.__class__.__name__, len(self.data), len(args)))
+        for k, v in self.data.items():
+            try:
+                self[k] = args[v.name]
+            except KeyError:
+                raise TypeError(
+                    "'{}' has no attribute '{}({})'".format(self.__class__, k, v.name))
+        super().__init__(args)
+
+    def __getattr__(self, key):
+        if key in self.data.keys():
+            key = self.data[key].name
+        try:
+            return self[key]
+        except KeyError:
+            raise AttributeError(
+                "'%s' object has no attribute '%s'" % (self.__class__, key))
+
+    def __setattr__(self, key, value):
+        # TODO Type judge
+        logger.debug("self data: %s", self.data)
+        for v in self.data.values():
+            print(v.value, key)
+            if v.value == key:
+                print("QWE")
+        self[key] = value
+
+    @property
+    def data(self):
+        return self.__class__.__data__

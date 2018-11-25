@@ -1,0 +1,10 @@
+Flask==1.0.2
+Flask-DotEnv==0.1.1
+Flask-SQLAlchemy==2.3.2
+gitdb2==2.0.4
+GitPython==2.1.11
+python-dotenv==0.9.1
+requests==2.19.1
+SQLAlchemy==1.2.12
+redis==3.0.1
+Flask-Redis==0.3.0

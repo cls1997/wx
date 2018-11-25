@@ -1,4 +1,4 @@
-from app.utils import cdata, etree
+from .utils import cdata, etree
 
 class Field:
     def __init__(self, name, is_cdata, **args):
