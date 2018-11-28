@@ -1,5 +1,5 @@
 from . import WechatMessage
-from .fields import Field, FloatField, ImageField, IntegerField, StringField
+from .fields import Field, ImageField, IntegerField, StringField
 
 reply_mapping = {}
 
@@ -8,6 +8,7 @@ def register_reply(name):
     def register(cls):
         reply_mapping[name] = cls
         return cls
+
     return register
 
 
@@ -20,7 +21,7 @@ class BaseReply(WechatMessage):
     def serialize(self):
         from .utils import etree
         root = etree.Element("xml")
-        for v in self.data.values():
+        for v in self._field.values():
             if isinstance(v, Field) and self[v.name]:
                 root.append(
                     v.get_element(self[v.name])

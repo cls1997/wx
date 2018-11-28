@@ -1,12 +1,12 @@
-
 import hashlib
 import logging
 import time
 
-import app.handlers
 import wechat.filters as filters
 from wechat.blueprint import wechat as wechat_blueprint
+from wechat.client import WechatAPIClient
 from wechat.messages import parse_wechat_message
+from wechat.storage.redisstorage import RedisStorage
 
 __all__ = ["Wechat", 'filters']
 
@@ -21,11 +21,16 @@ class Wechat:
         if app is not None:
             self.init_app(app)
 
+    # noinspection PyAttributeOutsideInit
     def init_app(self, app):
+        storage = None
+        if 'redis' in app.extensions:
+            storage = RedisStorage(app.extensions['redis'])
         self.app = app
         self.__token = app.config.get('WECHAT_TOKEN')
         self.__app_id = app.config.get('WECHAT_APPID')
         self.__app_secret = app.config.get('WECHAT_APP_SECRET')
+        self.client = WechatAPIClient(self.__app_id, self.__app_secret, storage)
         app.register_blueprint(wechat_blueprint)
         app.wechat = self
 
@@ -60,7 +65,7 @@ class Wechat:
             if _filters == filters.all:
                 self._handlers.append((_filters, func))
             else:
-                # First Defined First Called
+                # Last Defined First Called
                 self._handlers.insert(0, (_filters, func))
 
             return func
@@ -94,7 +99,7 @@ class Wechat:
         """
         TODO: We need INTERCEPTOR!!!
         """
-        self.logger.info("Message before parsing: {}" .format(msg))
+        self.logger.info("Message before parsing: {}".format(msg))
         start = time.time()
         msg = parse_wechat_message(msg)
         self.logger.info(
@@ -106,5 +111,5 @@ class Wechat:
 
         self.logger.debug(reply)
         self.logger.info("It spent %dms to make this response.",
-                         int((time.time()-start)*1000))
+                         int((time.time() - start) * 1000))
         return reply

@@ -1,9 +1,7 @@
-import hashlib
-import hmac
 import time
 
-from flask import Blueprint, Response
-from flask import current_app, jsonify, request, g
+from flask import Blueprint
+from flask import current_app, request, g
 
 wechat = Blueprint('wechat', __name__, url_prefix='/wechat')
 
@@ -14,10 +12,10 @@ def before_request():
 
 
 @wechat.teardown_request
-def teardown_request(exception=None):
+def teardown_request():
     diff = time.time() - g.start_time
     current_app.logger.info(
-        "It spent %dms to handle this request.", int(1000*diff))
+        "It spent %dms to handle this request.", int(1000 * diff))
 
 
 @wechat.route("", methods=['POST'])
@@ -36,10 +34,10 @@ def handle_get():
     nonce = params.get("nonce", "")
     echostr = params.get("echostr", "")
 
-    if (current_app.wechat.check_signature(signature, timestamp, nonce)):
+    if current_app.wechat.check_signature(signature, timestamp, nonce):
         return echostr
 
-    if(current_app.debug):
+    if current_app.debug:
         return "DEBUG"
     else:
         return ""

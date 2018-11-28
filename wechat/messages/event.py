@@ -1,12 +1,15 @@
 from . import WechatMessage
 
 from .fields import StringField, IntegerField, FloatField
+
 event_mapping = {}
+
 
 def register_event(name):
     def register(cls):
         event_mapping[name] = cls
         return cls
+
     return register
 
 

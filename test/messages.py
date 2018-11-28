@@ -47,7 +47,6 @@ messages = {
         <MsgId>1</MsgId>
     </xml>''',
 
-
     'location': '''<xml>
         <ToUserName><![CDATA[toUser]]></ToUserName>
         <FromUserName><![CDATA[fromUser]]></FromUserName>

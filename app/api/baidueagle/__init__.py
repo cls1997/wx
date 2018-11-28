@@ -1,8 +1,9 @@
 __name__ = 'baidueagle'
 
-import requests
-import os
 import json
+import os
+
+import requests
 
 ak = os.environ.get("LBS_AK")
 eagle_service_id = os.environ.get("EAGLE_SERVICE_ID")

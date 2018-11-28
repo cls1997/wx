@@ -1,14 +1,13 @@
 __name__ = "baidulbs"
 
 import os
+
 import requests
-import json
 
 ak = os.environ.get("LBS_AK")
 
 
 def get_image(latitude, longitude):
-
     longitude = longitude
     latitude = latitude
 

@@ -1,19 +1,11 @@
-import logging
+# coding: utf8
 import copy
+import logging
+import types
 
-from .fields import Field, StringField, IntegerField, FloatField, ImageField
-
-__all__ = ['WechatMessage', 'BaseMessage', 'BaseEvent', 'BaseReply', 'TextMessage',
-           'ImageMessage', 'VoiceMessage', 'VideoMessage', 'LocationMessage',
-           'ShortVideoMessage', 'LinkMessage', 'SubscribeEvent', 'UnsubscribeEvent',
-           'ClickEvent', 'LocationEvent', 'TextReply', 'ImageReply', 'VoiceReply',
-           'MusicReply', 'parse_wechat_message', 'create_reply']
+from .fields import Field
 
 logger = logging.getLogger("WechatAPI")
-
-msg_mapping = {"event": None}
-event_mapping = {}
-reply_mapping = {}
 
 
 class WechatMessageMetaclass(type):
@@ -43,13 +35,14 @@ class WechatMessageMetaclass(type):
 class WechatMessage(dict, metaclass=WechatMessageMetaclass):
     def __init__(self, **args):
         logger.debug("Message initializing .%s %s %s", self.__class__,
-                     [v.name for v in self.data.values()],
+                     [v.name for v in self._fields.values()],
                      [v for v in args.values()]
                      )
-        if len(args) != len(self.data):
+        # TODO: Encrypt Message Handle
+        if len(args) != len(self._fields):
             raise TypeError("{} takes exactly {} argument ({} given)".format(
-                self.__class__.__name__, len(self.data), len(args)))
-        for k, v in self.data.items():
+                self.__class__.__name__, len(self._fields), len(args)))
+        for k, v in self._fields.items():
             try:
                 self[k] = args[v.name]
             except KeyError:
@@ -58,8 +51,8 @@ class WechatMessage(dict, metaclass=WechatMessageMetaclass):
         super().__init__(args)
 
     def __getattr__(self, key):
-        if key in self.data.keys():
-            key = self.data[key].name
+        if key in self._fields.keys():
+            key = self._fields[key].name
         try:
             return self[key]
         except KeyError:
@@ -67,14 +60,18 @@ class WechatMessage(dict, metaclass=WechatMessageMetaclass):
                 "'%s' object has no attribute '%s'" % (self.__class__, key))
 
     def __setattr__(self, key, value):
-        # TODO Type judge
-        logger.debug("self data: %s", self.data)
-        for v in self.data.values():
-            print(v.value, key)
-            if v.value == key:
+        # TODO: Type judge
+        logger.debug("self data: %s", self._fields)
+        if (isinstance(value, types.FunctionType)):
+            super().__setattr__(key, types.MethodType(value, self))
+            return
+        for v in self._fields.values():
+            if v.name == key:
                 print("QWE")
         self[key] = value
 
     @property
-    def data(self):
+    def _fields(self):
         return self.__class__.__data__
+
+#

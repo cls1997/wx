@@ -1,8 +1,8 @@
 import unittest
 
-import app.wechat.filters as filters
-from app.wechat.messages import parse_wechat_message
-from messages import messages
+import wechat.filters as filters
+from test.messages import messages
+from wechat.messages import parse_wechat_message
 
 
 class MessageFilterTest(unittest.TestCase):
@@ -27,7 +27,7 @@ class MessageFilterTest(unittest.TestCase):
     def test_message_filter(self):
         self.assertTrue(self.do_message_filter_test(
             filters.message.text(),
-            [True, True, False,  False, False, False]
+            [True, True, False, False, False, False]
         ))
         self.assertTrue(self.do_message_filter_test(
             filters.message.image,
@@ -39,34 +39,35 @@ class MessageFilterTest(unittest.TestCase):
         ))
         self.assertTrue(self.do_message_filter_test(
             filters.message.video,
-            [False, False, False,  False, True, False]
+            [False, False, False, False, True, False]
         ))
         self.assertTrue(self.do_message_filter_test(
-            filters.message.typeof('location'),
-            [False, False, False,  False, False, True]
+            filters.message.location,
+            [False, False, False, False, False, True]
         ))
         self.assertTrue(self.do_message_filter_test(
             filters.message.startswith("msg"),
-            [True, False, False,  False, False, False]
+            [True, False, False, False, False, False]
         ))
         self.assertTrue(self.do_message_filter_test(
             filters.message.contains("ess"),
-            [False, True, False,  False, False, False]
+            [False, True, False, False, False, False]
         ))
-    
+
     def test_location_filter(self):
         msg = parse_wechat_message(messages.get('location'))
         self.assertTrue(
-            filters.message.location(msg.location_x,msg.location_y,1)(msg)
+            filters.message.in_location(msg.location_x, msg.location_y, 1)(msg)
         )
         self.assertFalse(
-            filters.message.location(msg.location_x+2,msg.location_y,1)(msg)
+            filters.message.in_location(msg.location_x + 2, msg.location_y, 1)(msg)
         )
 
     def test_common_filter(self):
         def t(m): return True
 
         def f(m): return False
+
         m = parse_wechat_message(messages["text1"])
 
         self.assertTrue(filters.all(m))

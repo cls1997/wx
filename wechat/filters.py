@@ -3,7 +3,7 @@ source: https://github.com/Xavier-Lam/flask-wechat/blob/master/flask_wechat/filt
 """
 
 from functools import reduce
-import re
+
 from .messages import WechatMessage
 
 __all__ = ["all", "and_", "event", "message", "or_"]
@@ -36,15 +36,18 @@ class Event(Filter):
             if rv and type:
                 return message.event == type
             return rv
+
         if isinstance(type, WechatMessage):
             return type.msg_type == "event"
         return decorated_func
 
     # 订阅
-    def subscribe(self, m): return self("subscribe")(m)
+    def subscribe(self, m):
+        return self("subscribe")(m)
 
     # 取消订阅
-    def unsubscribe(self, m): return self("unsubscribe")(m)
+    def unsubscribe(self, m):
+        return self("unsubscribe")(m)
 
     # 点击
     def click(self, key=None):
@@ -75,7 +78,6 @@ class Message(Filter):
     def __call__(self, message):
         return message.msg_type != "event"
 
-    
     typeof = staticmethod(_typeof)
 
     image = staticmethod(_typeof("image"))
@@ -84,12 +86,14 @@ class Message(Filter):
     shortvideo = staticmethod(_typeof("shortvideo"))
     location = staticmethod(_typeof("location"))
 
-    def contains(self, s, i=False): return \
-        lambda m: self.text(m) and _match(m.content, s, False, i) >= 0
+    def contains(self, s, i=False):
+        return \
+            lambda m: self.text(m) and _match(m.content, s, False, i) >= 0
 
     # 开头
-    def startswith(self, s, i=False): return \
-        lambda m: self.text(m) and _match(m.content, s, False, i) == 0
+    def startswith(self, s, i=False):
+        return \
+            lambda m: self.text(m) and _match(m.content, s, False, i) == 0
 
     # # 正则
     # def regex(self, p, fl=0): return \
@@ -122,17 +126,20 @@ class Message(Filter):
             if rv and text:
                 return _match(message.content, text, True, ignorecase) >= 0
             return rv
+
         if isinstance(text, WechatMessage):
             return self.typeof("text")(text)
         return decorated_func
 
-    # 在区域内
     def in_location(self, longitude, latitude, range):
         def decorated_func(message):
-            if self.typeof("location")(message):
-                return (pow(abs(message.location_x-latitude), 2) +
-                        pow(abs(message.location_y-longitude), 2)) < pow(range, 2)
+            if self.location(message):
+                x = float(message.location_x)
+                y = float(message.location_y)
+                return (pow(abs(x - latitude), 2) +
+                        pow(abs(y - longitude), 2)) < pow(range, 2)
             return False
+
         return decorated_func
 
 
@@ -143,6 +150,7 @@ def and_(*funcs):
     def __call(*args, **kwargs):
         return reduce(lambda func_a, func_b: (func_a if type(func_a) == bool else
                                               func_a(*args, **kwargs)) and func_b(*args, **kwargs), funcs)
+
     return __call
 
 
@@ -150,6 +158,7 @@ def or_(*funcs):
     def __call(*args, **kwargs):
         return reduce(lambda func_a, func_b: (func_a if type(func_a) == bool else
                                               func_a(*args, **kwargs)) or func_b(*args, **kwargs), funcs)
+
     return __call
 
 

@@ -1,12 +1,11 @@
-import hashlib
 import hmac
-import time
 
-from flask import Blueprint, Response
-from flask import current_app, jsonify, request, g
+from flask import Blueprint
+from flask import current_app, jsonify, request
 from git import Repo
 
 github = Blueprint('webhook', __name__, url_prefix='/github')
+
 
 @github.route('', methods=['POST'])
 def handle_github_hook():
@@ -21,5 +20,5 @@ def handle_github_hook():
         origin.pull()
         commit = request.json['after'][0:6]
         current_app.logger.getChild("Github").info('Repository updated with commit {}'.format(commit))
-        
+
     return jsonify({}), 200

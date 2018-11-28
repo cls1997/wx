@@ -1,4 +1,3 @@
-from flask import current_app
 from app.extensions import wechat
 from wechat import filters
 
@@ -24,14 +23,12 @@ def location_handler(message):
     # response = track_addpoint(
     #     wechat_user, msg.location_x, msg.location_y, msg.create_time)
 
-    from app.api.wechat import upload_img
     from app.api.baidulbs import get_image
 
     img = get_image(message.location_x, message.location_y)
-    img = upload_img(img)
+    img_media_id = wechat.client.media.upload('image', img)
 
-    return message.reply_image(img)
-
+    return message.reply_image(img_media_id)
 
 # @wechat.register_filter(filters.event('location'))
 # def event_location_handler(message):

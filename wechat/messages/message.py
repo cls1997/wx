@@ -1,15 +1,14 @@
-import logging
-import copy
 from . import WechatMessage
-from .fields import Field, StringField, IntegerField, FloatField, ImageField
+from .fields import StringField, IntegerField
+
 msg_mapping = {"event": None}
 
-__all__ = []
 
 def register_msg(name):
     def register(cls):
         msg_mapping[name] = cls
         return cls
+
     return register
 
 

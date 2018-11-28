@@ -29,11 +29,11 @@ def __etree_to_dict(elem):
         for e in list(elem):
             k, v = __etree_to_dict(e)
             d[k] = v
-            if (k == "CDATA"):
-                return (elem.tag, v)
-        return (elem.tag, d)
+            if k == "CDATA":
+                return elem.tag, v
+        return elem.tag, d
     else:
-        return (elem.tag, elem.text)
+        return elem.tag, elem.text
 
 
 def etree_to_dict(elem):
