@@ -4,6 +4,7 @@ import json
 import requests
 
 from wechat.client.api.base import BaseAPICollection
+from wechat.client.exception import WechatAPIException, APILimitedException
 from wechat.storage.memorystorage import MemoryStorage
 
 AccessToken = 'access_token'
@@ -199,23 +200,3 @@ class WechatAPIStatus:
 
     # 接口调用频率超过限制
     OUT_OF_API_FREQ_LIMIT = 45009
-
-
-class WechatAPIException(Exception):
-
-    def __init__(self, errcode, errmsg, client, request, response) -> None:
-        self.errcode = errcode
-        self.errmsg = errmsg
-        self.client = client
-        self.request = request
-        self.response = response
-
-    def __str__(self):
-        if self.errcode and self.errmsg:
-            return "ErrCode {} : {} \n" \
-                   "{} {}" \
-                .format(self.errcode, self.errmsg, self.request, self.response)
-
-
-class APILimitedException(WechatAPIException):
-    pass

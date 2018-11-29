@@ -1,5 +1,6 @@
 from app.extensions import wechat
 from wechat import filters
+from wechat.client.exception import WechatAPIException
 
 
 @wechat.register_filter(filters.all)
@@ -25,10 +26,12 @@ def location_handler(message):
 
     from app.api.baidulbs import get_image
 
-    img = get_image(message.location_x, message.location_y)
-    img_media_id = wechat.client.media.upload('image', ('a.png', img))
-
-    return message.reply_image(img_media_id)
+    try:
+        img = get_image(message.location_x, message.location_y)
+        img_media_id = wechat.client.media.upload('image', ('a.png', img))
+        return message.reply_image(img_media_id)
+    except WechatAPIException:
+        return message.reply_text("Service Error")
 
 # @wechat.register_filter(filters.event('location'))
 # def event_location_handler(message):
