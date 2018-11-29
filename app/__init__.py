@@ -9,6 +9,10 @@ from flask import Flask
 def create_app():
     application = Flask(__name__)
 
+    # Dotenv
+    from flask_dotenv import DotEnv
+    DotEnv(application)
+
     formatter = logging.Formatter(
         '[%(asctime)s] {%(name)s} %(levelname)s in %(module)s:\n\t %(message)s'
     )
