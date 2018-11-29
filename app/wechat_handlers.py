@@ -32,6 +32,7 @@ def location_handler(message):
 
     try:
         img = get_image(message.location_x, message.location_y)
+        logger.debug(img)
         img_media_id = wechat.client.media.upload('image', ('a.png', img))
         return message.reply_image(img_media_id)
     except WechatAPIException as e:

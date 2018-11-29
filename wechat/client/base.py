@@ -1,5 +1,6 @@
 import inspect
 import json
+import logging
 
 import requests
 
@@ -8,6 +9,7 @@ from wechat.client.exception import WechatAPIException, APILimitedException
 from wechat.storage.memorystorage import MemoryStorage
 
 AccessToken = 'access_token'
+logger = logging.getLogger('WechatAPI')
 
 
 def _is_api_endpoint(obj): return isinstance(obj, BaseAPICollection)
@@ -94,9 +96,6 @@ class BaseAPIClient:
 
         if 'params' not in kwargs:
             kwargs['params'] = {}
-        # if isinstance(kwargs['params'], dict) and \
-        #         'access_token' not in kwargs['params']:
-        #     kwargs['params']['access_token'] = self.access_token
         if isinstance(kwargs.get('data', ''), dict):
             body = json.dumps(kwargs['data'], ensure_ascii=False)
             body = body.encode('utf-8')
@@ -130,7 +129,7 @@ class BaseAPIClient:
             result = json.loads(res.content.decode('utf-8', 'ignore'), strict=False)
         except (TypeError, ValueError):
             # Return origin response object if we can not decode it as JSON
-            # logger.debug('Can not decode response as JSON', exc_info=True)
+            logger.debug('Can not decode response as JSON', exc_info=True)
             return res
 
         if not isinstance(result, dict):
@@ -146,7 +145,7 @@ class BaseAPIClient:
                     WechatAPIStatus.INVALID_CREDENTIAL,
                     WechatAPIStatus.INVALID_ACCESS_TOKEN,
                     WechatAPIStatus.EXPIRED_ACCESS_TOKEN):
-                # logger.info('Access token expired, fetch a new one and retry request')
+                logger.info('Access token expired, fetch a new one and retry request')
                 access_token = self._get_access_token()
                 kwargs['params']['access_token'] = access_token
                 return self._request(
