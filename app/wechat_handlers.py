@@ -1,7 +1,10 @@
+from flask import current_app
+
 from app.extensions import wechat
 from wechat import filters
 from wechat.client.exception import WechatAPIException
 
+logger = current_app.logger
 
 @wechat.register_filter(filters.all)
 def handler(message):
@@ -30,7 +33,8 @@ def location_handler(message):
         img = get_image(message.location_x, message.location_y)
         img_media_id = wechat.client.media.upload('image', ('a.png', img))
         return message.reply_image(img_media_id)
-    except WechatAPIException:
+    except WechatAPIException as e:
+        logger.exception(e)
         return message.reply_text("Service Error")
 
 # @wechat.register_filter(filters.event('location'))
