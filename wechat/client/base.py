@@ -35,8 +35,7 @@ class BaseAPIClient:
         self.auto_retry = auto_retry
         self.timeout = timeout
 
-    @property
-    def access_token(self):
+    def _access_token(self):
         access_token = self.storage.get(AccessToken)
         if access_token is None:
             access_token = self._get_access_token()
@@ -66,9 +65,9 @@ class BaseAPIClient:
             https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421140183
         """
 
-        rv = self.post(
+        rv = self.get(
             endpoint='/token',
-            datas={
+            params={
                 "grant_type": "client_credential",
                 "appid": self.__app_id,
                 "secret": self.__app_secret
@@ -94,9 +93,9 @@ class BaseAPIClient:
 
         if 'params' not in kwargs:
             kwargs['params'] = {}
-        if isinstance(kwargs['params'], dict) and \
-                'access_token' not in kwargs['params']:
-            kwargs['params']['access_token'] = self.access_token
+        # if isinstance(kwargs['params'], dict) and \
+        #         'access_token' not in kwargs['params']:
+        #     kwargs['params']['access_token'] = self.access_token
         if isinstance(kwargs.get('data', ''), dict):
             body = json.dumps(kwargs['data'], ensure_ascii=False)
             body = body.encode('utf-8')
@@ -120,13 +119,18 @@ class BaseAPIClient:
                 response=e.response
             )
 
-        return self._handle_result(
+        return self._handle_response(
             res, method, url, result_processor, **kwargs
         )
 
-    def _handle_result(self, res, method=None, url=None,
-                       result_processor=None, **kwargs):
-        result = res
+    def _handle_response(self, res, method=None, url=None,
+                         result_processor=None, **kwargs):
+        try:
+            result = json.loads(res.content.decode('utf-8', 'ignore'), strict=False)
+        except (TypeError, ValueError):
+            # Return origin response object if we can not decode it as JSON
+            # logger.debug('Can not decode response as JSON', exc_info=True)
+            return res
 
         if not isinstance(result, dict):
             return result
@@ -198,8 +202,19 @@ class WechatAPIStatus:
 
 
 class WechatAPIException(Exception):
-    def __init__(self, *args, **kwargs):
-        pass
+
+    def __init__(self, errcode, errmsg, client, request, response) -> None:
+        self.errcode = errcode
+        self.errmsg = errmsg
+        self.client = client
+        self.request = request
+        self.response = response
+
+    def __str__(self):
+        if self.errcode and self.errmsg:
+            return "ErrCode {} : {} \n" \
+                   "{} {}" \
+                .format(self.errcode, self.errmsg, self.request, self.response)
 
 
 class APILimitedException(WechatAPIException):

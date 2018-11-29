@@ -8,11 +8,13 @@ class MediaAPI(BaseAPICollection):
         :param media_file: 
         """
         return self._post(
-            endpoint='media/upload',
+            endpoint='/media/upload',
             params={
-                'type': media_type
+                'type': media_type,
+                'access_token': self.access_token
             },
             files={
                 'media': media_file
-            }
+            },
+            result_processor=lambda r: r['media_id']
         )

@@ -24,7 +24,7 @@ class Wechat:
     # noinspection PyAttributeOutsideInit
     def init_app(self, app):
         storage = None
-        if 'redis' in app.extensions:
+        if not app.debug and 'redis' in app.extensions:
             storage = RedisStorage(app.extensions['redis'])
         self.app = app
         self.__token = app.config.get('WECHAT_TOKEN')

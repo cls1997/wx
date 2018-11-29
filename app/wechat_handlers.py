@@ -26,7 +26,7 @@ def location_handler(message):
     from app.api.baidulbs import get_image
 
     img = get_image(message.location_x, message.location_y)
-    img_media_id = wechat.client.media.upload('image', img)
+    img_media_id = wechat.client.media.upload('image', ('a.png', img))
 
     return message.reply_image(img_media_id)
 

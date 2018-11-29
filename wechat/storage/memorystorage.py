@@ -9,7 +9,10 @@ class MemoryStorage(BaseStorage):
         self._expire_at = {}
 
     def _expire(self, key):
-        return self._expire_at[key] < int(time.time())
+        try:
+            return self._expire_at[key] < int(time.time())
+        except KeyError:
+            return True
 
     def get(self, key):
         if self._expire(key):
