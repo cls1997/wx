@@ -16,7 +16,7 @@ class RedisStorage(BaseStorage):
         value = self.redis.get(key)
         if value is None:
             return default
-        return value.decoding('utf-8')
+        return value.decode('utf-8')
 
     def set(self, key, value, ttl=None):
         if value is None:
