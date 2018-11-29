@@ -37,7 +37,7 @@ def create_app():
     application.config['WECHAT_APPID'] = os.environ.get('WECHAT_APPID')
     application.config['WECHAT_APP_SECRET'] = os.environ.get('WECHAT_APP_SECRET')
 
-    application.config[''] = os.environ.get('')
+    application.logger.debug(application.config)
 
     configure_extensions(application)
 
