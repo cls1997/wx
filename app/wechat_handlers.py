@@ -1,10 +1,11 @@
-from flask import current_app
+import logging
 
 from app.extensions import wechat
 from wechat import filters
 from wechat.client.exception import WechatAPIException
 
-logger = current_app.logger
+logger = logging.getLogger('flask.app')
+
 
 @wechat.register_filter(filters.all)
 def handler(message):
