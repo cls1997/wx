@@ -1,10 +1,10 @@
-__name__ = "baidulbs"
+from flask import current_app
 
-import os
+__name__ = "baidulbs"
 
 import requests
 
-ak = os.environ.get("LBS_AK")
+ak = current_app.config.get("LBS_AK")
 
 
 def get_image(latitude, longitude):

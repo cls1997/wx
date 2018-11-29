@@ -1,12 +1,13 @@
+from flask import current_app
+
 __name__ = 'baidueagle'
 
 import json
-import os
 
 import requests
 
-ak = os.environ.get("LBS_AK")
-eagle_service_id = os.environ.get("EAGLE_SERVICE_ID")
+ak = current_app.config.get("LBS_AK")
+eagle_service_id = current_app.config.get("EAGLE_SERVICE_ID")
 
 
 def entity_create(wechat_user):
