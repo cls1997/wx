@@ -1,6 +1,7 @@
 # coding: utf8
 import inspect
 import logging
+import types
 
 from wechat.messages.fields import Field
 
@@ -55,15 +56,10 @@ class WechatMessage(metaclass=WechatMessageMetaclass):
     #         raise AttributeError(
     #             "'%s' object has no attribute '%s'" % (self.__class__, key))
     #
-    # def __setattr__(self, key, value):
-    #     # TODO: Type judge
-    #     logger.debug("self data: %s", self._fields)
-    #     if isinstance(value, types.FunctionType):
-    #         super().__setattr__(key, types.MethodType(value, self))
-    #         return
-    #     for v in self._fields.values():
-    #         if v.name == key:
-    #             print("QWE")
-    #     super.__setattr__(self, key, value)
+    def __setattr__(self, key, value):
+        if isinstance(value, types.FunctionType):
+            super().__setattr__(key, types.MethodType(value, self))
+            return
+        super.__setattr__(key, value)
 
 #
