@@ -61,23 +61,21 @@ def create_reply(msg: BaseMessage, msg_type: str, reply: dict) -> BaseReply:
     import time
 
     reply_klz = reply_mapping[msg_type]
-
     logger.debug("Reply rendering. args: %s", reply)
+
     reply["ToUserName"] = msg.from_user_name
     reply["FromUserName"] = msg.to_user_name
     reply["CreateTime"] = int(time.time())
     reply["MsgType"] = msg_type
 
-    accept_key = []
-    accept_key.extend([v.name for v in reply_klz.__data__.values()])
-    accept_key.extend([k for k in reply_klz.__data__.keys()])
+    accept_keys = reply_klz.accept_keys()
     tmp_key = [k for k in reply.keys()]
     # Delete unacceptable keys
     for k in tmp_key:
-        if k not in accept_key:
+        if k not in accept_keys:
             reply.pop(k)
 
-    for v in reply_klz.__data__.values():
+    for v in reply_klz._fields.values():
         if v.name not in reply.keys():
             reply[v.name] = None
 

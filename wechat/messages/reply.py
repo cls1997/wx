@@ -18,13 +18,21 @@ class BaseReply(WechatMessage):
     create_time = IntegerField("CreateTime")
     msg_type = StringField("MsgType")
 
+    @classmethod
+    def accept_keys(cls):
+        accept_keys = []
+        accept_keys.extend([v.name for v in cls._fields.values()])
+        accept_keys.extend([k for k in cls._fields.keys()])
+        return accept_keys
+
     def serialize(self):
         from .utils import etree
         root = etree.Element("xml")
-        for v in self._field.values():
-            if isinstance(v, Field) and self[v.name]:
+        for v in self._fields.values():
+            value = getattr(self, v.name, None)
+            if isinstance(v, Field) and value:
                 root.append(
-                    v.get_element(self[v.name])
+                    v.get_element(value)
                 )
 
         rv = etree.tostring(root, encoding="utf-8")

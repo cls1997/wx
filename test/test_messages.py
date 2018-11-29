@@ -24,3 +24,12 @@ class MessageTest(unittest.TestCase):
 
         message2 = self.messages["text2"]
         self.assertFalse(message.Content == message2.Content)
+
+    def test_reply(self):
+        message = self.messages['text1']
+        reply = message.reply_text("123")
+        self.assertTrue(reply.Content == '123')
+
+    def test_reply_serialize(self):
+        message = self.messages['text1']
+        message.reply_text("123").serialize()

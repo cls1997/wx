@@ -12,7 +12,10 @@ def before_request():
 
 
 @wechat.teardown_request
-def teardown_request():
+def teardown_request(exception=None):
+    # Suppress: variable is not used
+    if exception:
+        pass
     diff = time.time() - g.start_time
     current_app.logger.info(
         "It spent %dms to handle this request.", int(1000 * diff))

@@ -60,6 +60,6 @@ class WechatMessage(metaclass=WechatMessageMetaclass):
         if isinstance(value, types.FunctionType):
             super().__setattr__(key, types.MethodType(value, self))
             return
-        super.__setattr__(key, value)
+        super().__setattr__(key, value)
 
 #

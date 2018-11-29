@@ -15,7 +15,6 @@ class FieldDescription:
         return self.field
 
     def __set__(self, instance, value):
-
         instance._data[self.attr_name] = value
 
 
