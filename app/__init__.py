@@ -1,6 +1,5 @@
 import logging
 import logging.handlers
-import os
 import sys
 
 from flask import Flask
@@ -33,13 +32,6 @@ def create_app():
             file_handler.setFormatter(formatter)
             file_handler.setLevel(logging.INFO)
             logger.addHandler(file_handler)
-
-    application.config['GITHUB_SECRET'] = os.environ.get('GITHUB_SECRET')
-    application.config['REPO_PATH'] = os.environ.get('REPO_PATH')
-
-    application.config['WECHAT_TOKEN'] = os.environ.get('WECHAT_TOKEN')
-    application.config['WECHAT_APPID'] = os.environ.get('WECHAT_APPID')
-    application.config['WECHAT_APP_SECRET'] = os.environ.get('WECHAT_APP_SECRET')
 
     application.logger.debug(application.config)
 
