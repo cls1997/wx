@@ -1,5 +1,5 @@
 from . import WechatMessage
-from .fields import StringField, IntegerField
+from .fields import StringField, IntegerField, FloatField
 
 msg_mapping = {"event": None}
 
@@ -51,8 +51,8 @@ class ShortVideoMessage(BaseMessage):
 
 @register_msg("location")
 class LocationMessage(BaseMessage):
-    location_x = IntegerField("Location_X")
-    location_y = IntegerField("Location_Y")
+    location_x = FloatField("Location_X")  # Latitude
+    location_y = FloatField("Location_Y")  # Longitude
     scale = IntegerField("Scale")
     label = StringField("Label")
 

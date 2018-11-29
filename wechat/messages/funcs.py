@@ -21,7 +21,7 @@ def parse_wechat_message(xml) -> BaseMessage:
 
     def _reply_media(media):
         def func(self, media_id, **kwargs):
-            kwargs["media_id"] = media_id
+            kwargs["MediaId"] = media_id
             return create_reply(self, media, kwargs)
 
         return func

@@ -31,7 +31,7 @@ class Filter(object):
 
 class Event(Filter):
     def __call__(self, type=None):
-        def decorated_func(message):
+        def wrapper(message):
             rv = message.msg_type == "event"
             if rv and type:
                 return message.event == type
@@ -39,7 +39,7 @@ class Event(Filter):
 
         if isinstance(type, WechatMessage):
             return type.msg_type == "event"
-        return decorated_func
+        return wrapper
 
     # 订阅
     def subscribe(self, m):
@@ -51,7 +51,7 @@ class Event(Filter):
 
     # 点击
     def click(self, key=None):
-        def decorated_func(message):
+        def wrapper(message):
             rv = self("CLICK")(message)
             if rv and key:
                 return message.eventkey == key
@@ -59,11 +59,11 @@ class Event(Filter):
 
         if isinstance(key, WechatMessage):
             return self("CLICK")(key)
-        return decorated_func
+        return wrapper
 
     # 点击跳转
     def view(self, url=None, accuracy=False, ignorecase=False):
-        def decorated_func(message):
+        def wrapper(message):
             rv = self("VIEW")(message)
             if rv and url:
                 return _match(message.eventkey, url, accuracy, ignorecase) >= 0
@@ -71,7 +71,7 @@ class Event(Filter):
 
         if isinstance(url, WechatMessage):
             return self("VIEW")(url)
-        return decorated_func
+        return wrapper
 
 
 class Message(Filter):
@@ -121,7 +121,7 @@ class Message(Filter):
     #     return and_(self.text, func)
 
     def text(self, text=None, ignorecase=False):
-        def decorated_func(message):
+        def wrapper(message):
             rv = self.typeof("text")(message)
             if rv and text:
                 return _match(message.content, text, True, ignorecase) >= 0
@@ -129,18 +129,18 @@ class Message(Filter):
 
         if isinstance(text, WechatMessage):
             return self.typeof("text")(text)
-        return decorated_func
+        return wrapper
 
-    def in_location(self, longitude, latitude, range):
-        def decorated_func(message):
+    def in_location(self, latitude, longitude, range):
+        def wrapper(message):
             if self.location(message):
-                x = float(message.location_x)
-                y = float(message.location_y)
-                return (pow(abs(x - latitude), 2) +
-                        pow(abs(y - longitude), 2)) < pow(range, 2)
+                la = message.location_x
+                lo = message.location_y
+                return (pow(abs(la - latitude), 2) +
+                        pow(abs(lo - longitude), 2)) < pow(range, 2)
             return False
 
-        return decorated_func
+        return wrapper
 
 
 def all(m): return True

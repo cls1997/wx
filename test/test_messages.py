@@ -16,7 +16,11 @@ class MessageTest(unittest.TestCase):
                  'reply_text', 'reply_image', 'reply_voice', 'reply_video']
         for attr in attrs:
             self.assertTrue(hasattr(message, attr))
-
+        print(dir(message))
+        self.assertTrue(message.FromUserName == 'fromUser')
         self.assertTrue(message.from_user_name == message.FromUserName)
-        self.assertTrue(isinstance(message.from_user_name, str))
-        self.assertTrue(isinstance(message.msg_id, int))
+        self.assertTrue(isinstance(message.FromUserName, str))
+        self.assertTrue(isinstance(message.MsgId, int))
+
+        message2 = self.messages["text2"]
+        self.assertFalse(message.Content == message2.Content)
