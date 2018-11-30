@@ -30,7 +30,7 @@ def parse_wechat_message(xml) -> BaseMessage:
         #TODO: 
         article_count = len(articles)
         
-        return create_reply(self, 'article',{
+        return create_reply(self, 'news',{
             'ArticleCount': article_count,
             'Articles': articles
         })
