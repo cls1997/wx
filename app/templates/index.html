@@ -1,14 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <title></title>
 </head>
+
 <body>
-  TEST JSSDK
+  <p>TEST JSSDK</p>
   {{ request.base_url }}
 </body>
 <script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
 <script>
   /*
    * 注意：
@@ -29,10 +32,24 @@
     signature: '{{ signature }}',
     jsApiList: [
       // 所有要调用的 API 都要加到这个列表中
+      'checkJsApi'
     ]
   });
+
   wx.ready(function () {
-    // 在这里调用 API
+    wx.checkJsApi({
+      jsApiList: ['chooseImage'], // 需要检测的JS接口列表，所有JS接口列表见附录2,
+      success: function (res) {
+        // 以键值对的形式返回，可用的api值true，不可用为false
+        // 如：{"checkResult":{"chooseImage":true},"errMsg":"checkJsApi:ok"}
+        $("p").text(res);
+      }
+    });
+  });
+
+  wx.error(function(res) {
+    $("p").text(res);
   });
 </script>
+
 </html>

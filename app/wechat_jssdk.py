@@ -28,7 +28,6 @@ class Sign:
     def sign(self):
         string = '&'.join(['%s=%s' % (key.lower(), self.ret[key])
                            for key in sorted(self.ret)])
-        print(string)
         self.ret['signature'] = hashlib.sha1(
             string.encode('utf-8')).hexdigest()
         return self.ret
@@ -59,7 +58,7 @@ def index():
     sign = sign.sign()
     return render_template("index.html",
                            appId=app_id,
-                           timestamp=int(time.time()),
+                           timestamp=sign['timestamp'],
                            nonceStr=sign['nonceStr'],
                            signature=sign['signature']
                            )
