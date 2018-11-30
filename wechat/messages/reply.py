@@ -64,7 +64,7 @@ class MusicReply(BaseReply):
     hq_music_url = StringField("HQMusicUrl")
     thumb_media_id = StringField("ThumbMediaId")
 
-@register_reply("article")
+@register_reply("news")
 class ArticlesReply(BaseReply):
     article_count = IntegerField("ArticleCount")
     articles = ArticlesField("Articles")
