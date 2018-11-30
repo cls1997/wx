@@ -40,6 +40,9 @@ def create_app():
     from app.github import github
     application.register_blueprint(github)
 
+    from app.wechat_jssdk import jssdk
+    application.register_blueprint(jssdk, url_prefix='/')
+
     import app.wechat_handlers
 
     return application
