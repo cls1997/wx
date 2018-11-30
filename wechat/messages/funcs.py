@@ -25,17 +25,22 @@ def parse_wechat_message(xml) -> BaseMessage:
             return create_reply(self, media, kwargs)
 
         return func
-
-    # def _reply_articles(self, articles):
-    #     # TODO
-    #     pass
+    
+    def _reply_articles(self, articles):
+        #TODO: 
+        article_count = len(articles)
+        
+        return create_reply(self, 'article',{
+            'ArticleCount': article_count,
+            'Articles': articles
+        })
 
     funcs = {
         "reply_text": _reply_text,
         "reply_image": _reply_media("image"),
         "reply_voice": _reply_media("voice"),
         "reply_video": _reply_media("video"),
-        # "reply_articles": _reply_articles,
+        "reply_articles": _reply_articles,
     }
 
     from .utils import etree, etree_to_dict

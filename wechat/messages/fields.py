@@ -106,3 +106,31 @@ class VideoField(Field):
         elem.append(cdata(data))
         video.append(elem)
         return video
+
+
+class ArticlesField(Field):
+    #TODO:
+    def __init__(self, name):
+        super().__init__(name, False)
+
+    def get_element(self, data):
+        articles = etree.Element(self.name)
+        for article in data:
+            articles.append(self.get_article_item(article))
+        return articles
+
+    def get_article_item(self, article):
+        def func(str):
+            rv = etree.Element(str)
+            rv.append(cdata(article[str]))
+            return rv
+            
+        try:
+            item = etree.Element('item')
+            item.append(func('Title'))
+            item.append(func('Description'))
+            item.append(func('PicUrl'))
+            item.append(func('Url'))
+            return item
+        except KeyError:
+            print('FUCK')

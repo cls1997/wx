@@ -1,5 +1,5 @@
 from . import WechatMessage
-from .fields import Field, ImageField, IntegerField, StringField
+from .fields import Field, ImageField, IntegerField, StringField, ArticlesField
 
 reply_mapping = {}
 
@@ -64,5 +64,7 @@ class MusicReply(BaseReply):
     hq_music_url = StringField("HQMusicUrl")
     thumb_media_id = StringField("ThumbMediaId")
 
-# class ArticlesReply(BaseReply):
-#     pass
+@register_reply("article")
+class ArticlesReply(BaseReply):
+    article_count = IntegerField("ArticleCount")
+    articles = ArticlesField("Articles")

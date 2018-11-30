@@ -34,7 +34,7 @@ class WechatMessage(metaclass=WechatMessageMetaclass):
         self._data = {}
         logger.debug("Message initializing .%s %s %s", self.__class__,
                      [v.name for v in self._fields.values()],
-                     [v for v in args.values()]
+                     [(k,v) for k,v in args.items()]
                      )
         # TODO: Encrypt Message Handle
         if len(args) != len(self._fields) and False:

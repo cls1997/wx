@@ -47,3 +47,14 @@ def location_handler(message):
 #         entity_create(wechat_user)
 
 #     track_addpoint(wechat_user, message.latitude, message.longitude, message.create_time)
+
+@wechat.register_filter(filters.message.startswith('geez'))
+def geez(message):
+    return message.reply_articles([
+        {
+            "Title":'title',
+            "Description": 'desc',
+            "PicUrl": 'url',
+            "Url": 'url'
+        }
+    ])
