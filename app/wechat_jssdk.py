@@ -42,6 +42,7 @@ def get_jsapi_ticket(app):
     r = requests.get(url)
     try:
         r = json.loads(r.content)
+        print(r)
     except Exception as e:
         app.logger.exception(e)
     return r['ticket']
