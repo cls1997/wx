@@ -2,10 +2,10 @@ class BaseAPICollection:
     def __init__(self, client=None):
         self.client = client
 
-    def _get(self, **kwargs):
+    def get(self, **kwargs):
         return self.client.get(**kwargs)
 
-    def _post(self, **kwargs):
+    def post(self, **kwargs):
         return self.client.post(**kwargs)
 
     @property

@@ -7,7 +7,7 @@ class MediaAPI(BaseAPICollection):
         :param media_type: image/voice/video/thumb
         :param media_file: 
         """
-        return self._post(
+        return self.post(
             endpoint='/media/upload',
             params={
                 'type': media_type,

@@ -1,12 +1,10 @@
 import hashlib
-import time
 import random
-import time
 import string
-import requests
-import json
+import time
 
 from flask import Blueprint, current_app, render_template, request
+
 jssdk = Blueprint("jssdk", __name__, template_folder='templates')
 
 
@@ -33,25 +31,10 @@ class Sign:
         return self.ret
 
 
-def get_jsapi_ticket(app):
-    access_token = app.wechat.client.access_token
-
-    url = 'https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token={}&type=jsapi'.format(
-        access_token)
-
-    r = requests.get(url)
-    try:
-        r = json.loads(r.content)
-        print(r)
-    except Exception as e:
-        app.logger.exception(e)
-    return r['ticket']
-
-
 @jssdk.route("/")
 def index():
     sign = Sign(
-        get_jsapi_ticket(current_app),
+        current_app.wechat.client.js_sdk.get_ticket(),
         request.base_url
     )
 
