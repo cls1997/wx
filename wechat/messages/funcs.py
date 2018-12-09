@@ -49,7 +49,10 @@ def parse_wechat_message(xml) -> BaseMessage:
     xml = etree_to_dict(etree.fromstring(xml))
     msg_type = xml["MsgType"]
     if msg_type == "event":
-        msg = event_mapping[xml["Event"]]
+        try:
+            msg = event_mapping[xml["Event"]]
+        except KeyError:
+            raise RuntimeError("Unsupported Message. %s", xml["Event"])
     else:
         try:
             msg = msg_mapping[msg_type](**xml)
