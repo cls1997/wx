@@ -52,7 +52,7 @@ def query(key: str) -> dict:
         return None
 
 
-@js_sdk.route("/")
+@js_sdk.route("")
 def index():
     app_id = current_app.config.get('WECHAT_APPID')
     sign = Sign().sign()
