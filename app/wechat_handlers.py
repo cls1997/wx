@@ -2,6 +2,7 @@ import logging
 
 from app.extensions import wechat
 from wechat import filters
+from wechat.client.exception import WechatAPIException
 
 logger = logging.getLogger('flask.app')
 
@@ -36,7 +37,7 @@ def console_mode(message):
             {
                 "type": "view",
                 "name": "词典",
-                "url": "http://http://120.79.186.46/wxjs"
+                "url": "http://120.79.186.46/wxjs/"
             },
         ]
     }
@@ -45,8 +46,14 @@ def console_mode(message):
     funcs = {
         'delete': wechat.client.menu.delete,
         'add': lambda: wechat.client.menu.create(default_menu),
+        'refresh_token': lambda: wechat.client.refresh_token()
     }
-
-    func = funcs[command]
-    print(func())
-    return message.reply_text("ok")
+    try:
+        func = funcs[command]
+        res = func()
+        print(res)
+        return message.reply_text("ok\n result: {}".format(res))
+    except KeyError:
+        return message.reply_text('unknown command')
+    except WechatAPIException:
+        return message.reply_text('error')

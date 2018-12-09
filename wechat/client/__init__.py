@@ -16,6 +16,9 @@ class WechatAPIClient(BaseAPIClient):
     def access_token(self):
         return self._access_token()
 
+    def refresh_token(self):
+        return self._get_access_token()
+
     @property
     def js_api_ticket(self):
         ticket = self.storage.get('js_sdk_ticket')
