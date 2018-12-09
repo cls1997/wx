@@ -48,15 +48,17 @@
                                     <span>
                                         <em>英 [{{ result['symbols'][0]['ph_en'] }}]</em>
                                         <i class="dic-sound"></i>
-                                        <audio id='ph_en' src="{{ result['symbols'][0]['ph_en_mp3'] }}"
-                                               preload="auto"></audio>
+                                        <audio id='ph_en' preload="auto">
+                                            <source src="{{ result['symbols'][0]['ph_en_mp3'] }}" type="audio/mpeg">
+                                        </audio>
 
                                     </span>
                                     <span>
                                         <em>美 [{{ result['symbols'][0]['ph_am'] }}]</em>
                                         <i class="dic-sound"></i>
-                                        <audio id='ph_am' src="{{ result['symbols'][0]['ph_am_mp3'] }}"
-                                               preload="auto"></audio>
+                                        <audio id='ph_am' preload="auto">
+                                            <source src="{{ result['symbols'][0]['ph_am_mp3'] }}" type="audio/mpeg">
+                                        </audio>
 
                                     </span>
                                 </div>
@@ -124,6 +126,7 @@
 <script src="{{ url_for("js_sdk.static", filename='require.js') }}?t={{ time }}"></script>
 <script>
     $('i.dic-sound').on('click', function () {
+        console.log($(this)[0].nextElementSibling);
         $(this)[0].nextElementSibling.play()
     })
 
