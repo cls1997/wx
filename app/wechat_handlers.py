@@ -23,7 +23,7 @@ def geez(message):
             "Title": 'title',
             "Description": 'desc',
             "PicUrl": 'url',
-            "Url": 'http://120.79.186.46'
+            "Url": 'http://120.79.186.46/wxjs'
         }
     ])
 
