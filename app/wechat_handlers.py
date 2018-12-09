@@ -23,7 +23,7 @@ def geez(message):
             "Title": 'title',
             "Description": 'desc',
             "PicUrl": 'url',
-            "Url": 'http://120.79.186.46/wxjs'
+            "Url": 'http://120.79.186.46/wxjs/'
         }
     ])
 
@@ -40,7 +40,13 @@ def console_mode(message):
             },
         ]
     }
+    command = content[1:]
 
-    # wechat.client.menu.create(default_menu)
-    wechat.client.menu.delete()
-    return message
+    funcs = {
+        'delete': wechat.client.menu.delete,
+        'add': lambda: wechat.client.menu.create(default_menu),
+    }
+
+    func = funcs[command]
+    print(func())
+    return message.reply_text("ok")

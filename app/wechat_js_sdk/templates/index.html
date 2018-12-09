@@ -28,7 +28,7 @@
 <div class="index index-top index-result" id="index">
     <div class="result result-transition" id="dic" style="margin-top: 65px;">
         <div class="dic-wrapper">
-            {% if result is not defined %}
+            {% if result['word_name'] is not defined %}
                 <div class="no-result"><i></i>
                     <p>对不起</p>
                     <p>没有找到相关词典解释</p>
@@ -45,15 +45,17 @@
                         {% if result['symbols'][0]['ph_en'] is string %}
                             <div class="dic-basic-info" style="">
                                 <div class="dic-basic-voice">
-                                    <span>
+                                    {% if result['symbols'][0]['ph_en'] %}
+                                        <span>
                                         <em>英 [{{ result['symbols'][0]['ph_en'] }}]</em>
                                         <i class="dic-sound"></i>
                                         <audio id='ph_en' preload="auto">
                                             <source src="{{ result['symbols'][0]['ph_en_mp3'] }}" type="audio/mpeg">
                                         </audio>
-
                                     </span>
-                                    <span>
+                                    {% endif %}
+                                    {% if result['symbols'][0]['ph_am'] %}
+                                        <span>
                                         <em>美 [{{ result['symbols'][0]['ph_am'] }}]</em>
                                         <i class="dic-sound"></i>
                                         <audio id='ph_am' preload="auto">
@@ -61,6 +63,7 @@
                                         </audio>
 
                                     </span>
+                                    {% endif %}
                                 </div>
 
                                 <ul class="dic-basic-explain">
@@ -109,7 +112,7 @@
         </div>
     </div>
     <div class="index-main" style="top: 0px;">
-        <form class="index-main-box" action="javascript:">
+        <form class="index-main-box">
             <div class="index-input"><input type="search" id="index-input-main" class="index-input-main"
                                             placeholder="{{ key }}" autocomplete="off"></div>
             <div class="index-submit"></div>
@@ -128,6 +131,10 @@
     $('i.dic-sound').on('click', function () {
         console.log($(this)[0].nextElementSibling);
         $(this)[0].nextElementSibling.play()
+    });
+
+    $('div.index-submit').on('click', function () {
+        location.href = '{{ request.base_url }}?key=' + $('input#index-input-main')[0].value
     })
 
 </script>
