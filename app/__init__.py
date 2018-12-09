@@ -1,5 +1,6 @@
 import logging
 import logging.handlers
+import os
 import sys
 
 from flask import Flask
@@ -34,17 +35,21 @@ def create_app():
             logger.addHandler(file_handler)
 
     application.logger.debug(application.config)
+    application.logger.debug(os.environ)
 
     configure_extensions(application)
+
+    @application.route("/")
+    def index():
+        return "Oops"
 
     from app.github import github
     application.register_blueprint(github)
 
-    from app.wechat_jssdk import jssdk
-    application.register_blueprint(jssdk, url_prefix='/')
+    from app.wechat_js_sdk import js_sdk
+    application.register_blueprint(js_sdk, url_prefix='/wxjs')
 
     import app.wechat_handlers
-
     return application
 
 

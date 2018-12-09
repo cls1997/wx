@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="zh-cn" style="font-size: 33.6px;">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <title>INDEX</title>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no, email=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <link rel="stylesheet" href="{{ url_for("js_sdk.static", filename='mew.css') }}?t={{ time }}">
+</head>
+
+<body class="body-week-up">
+
+{#exchange of word#}
+{% macro exchange(name,key) %}
+    {% if result['exchange'][key] is not string %}
+        <p><label>{{ name }}</label> <span>{{ ' '.join(result['exchange'][key]) }}</span></p>
+    {% endif %}
+{% endmacro %}
+
+
+{# start #}
+<div class="screen" style="min-height: 0; height: 0;">
+    {{ sign['sasdign'] }}
+</div>
+<div class="index index-top index-result" id="index">
+    <div class="result result-transition" id="dic" style="margin-top: 65px;">
+        <div class="dic-wrapper">
+            {% if result is not defined %}
+                <div class="no-result"><i></i>
+                    <p>对不起</p>
+                    <p>没有找到相关词典解释</p>
+                    <p>建议您：检查输入是否有误？</p>
+                </div>
+            {% else %}
+                <div class="dic dic-show-base">
+                    <ul class="dic-nav">
+                        <li class="active">字典释义</li>
+                        <li class="dic-slider" style="left: 2%;"></li>
+                    </ul>
+                    <div class="dic-basic">
+
+                        {% if result['symbols'][0]['ph_en'] is string %}
+                            <div class="dic-basic-info" style="">
+                                <div class="dic-basic-voice">
+                                    <span>
+                                        <em>英 [{{ result['symbols'][0]['ph_en'] }}]</em>
+                                        <i class="dic-sound"></i>
+                                        <audio id='ph_en' src="{{ result['symbols'][0]['ph_en_mp3'] }}"
+                                               preload="auto"></audio>
+
+                                    </span>
+                                    <span>
+                                        <em>美 [{{ result['symbols'][0]['ph_am'] }}]</em>
+                                        <i class="dic-sound"></i>
+                                        <audio id='ph_am' src="{{ result['symbols'][0]['ph_am_mp3'] }}"
+                                               preload="auto"></audio>
+
+                                    </span>
+                                </div>
+
+                                <ul class="dic-basic-explain">
+                                    {% for part in result['symbols'][0]['parts'] %}
+                                        <li>
+                                            <span>{{ part['part'] }}</span>
+                                            <p>
+                                                <span>{{ part['means'] | join('；</span> <span>') | safe }}</span>
+                                            </p>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                                <div class="dic-plural">
+                                    <ul class="dic-plural-title">
+                                        <li></li>
+                                        <li></li>
+                                    </ul>
+                                    {% if result['exchange'] %}
+                                        <div class="dic-folds gotopfade-transition">
+                                            <div>
+                                                {{ exchange('复数:','word_pl') }}
+                                                {{ exchange('过去式：','word_past') }}
+                                                {{ exchange('过去分词：','word_done') }}
+                                                {{ exchange('现在分词：','word_ing') }}
+                                                {{ exchange('第三人称单数：','word_third') }}
+                                                {{ exchange('比较级：','word_er') }}
+                                                {{ exchange('最高级：','word_est') }}
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% else %}
+                            <div class="dic-basic-ce"><p><span>{{ result['word_name'] }}</span>
+                                <span>[{{ result['symbols'][0]['word_symbol'] }}]</span></p>
+                                <ul>
+                                    {% for mean in result['symbols'][0]['parts'][0]['means'] %}
+                                        <li>{{ mean['word_mean'] }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    <div class="index-main" style="top: 0px;">
+        <form class="index-main-box" action="javascript:">
+            <div class="index-input"><input type="search" id="index-input-main" class="index-input-main"
+                                            placeholder="{{ key }}" autocomplete="off"></div>
+            <div class="index-submit"></div>
+        </form>
+    </div>
+</div>
+
+{# end #}
+
+<script src="http://res.wx.qq.com/open/js/jweixin-1.4.0.js"></script>
+{#<script src="{{ url_for("js_sdk.static", filename='vue.min.js') }}?t={{ time }}"></script>#}
+<script src="{{ url_for("js_sdk.static", filename='zepto.min.js') }}?t={{ time }}"></script>
+{#<script src="{{ url_for("js_sdk.static", filename='vue-awesome-swiper.min.js') }}?t={{ time }}"></script>#}
+<script src="{{ url_for("js_sdk.static", filename='require.js') }}?t={{ time }}"></script>
+<script>
+    $('i.dic-sound').on('click', function () {
+        $(this)[0].nextElementSibling.play()
+    })
+
+</script>
+
+<script>
+    console.log({{ result|safe }});
+</script>
+
+<script>
+    /*
+     * 注意：
+     * 1. 所有的JS接口只能在公众号绑定的域名下调用，公众号开发者需要先登录微信公众平台进入“公众号设置”的“功能设置”里填写“JS接口安全域名”。
+     * 2. 如果发现在 Android 不能分享自定义内容，请到官网下载最新的包覆盖安装，Android 自定义分享接口需升级至 6.0.2.58 版本及以上。
+     * 3. 常见问题及完整 JS-SDK 文档地址：http://mp.weixin.qq.com/wiki/7/aaa137b55fb2e0456bf8dd9148dd613f.html
+     *
+     * 开发中遇到问题详见文档“附录5-常见错误及解决办法”解决，如仍未能解决可通过以下渠道反馈：
+     * 邮箱地址：weixin-open@qq.com
+     * 邮件主题：【微信JS-SDK反馈】具体问题
+     * 邮件内容说明：用简明的语言描述问题所在，并交代清楚遇到该问题的场景，可附上截屏图片，微信团队会尽快处理你的反馈。
+     */
+    wx.config({
+        debug: false,
+        appId: '{{ appId }}',
+        timestamp: {{ sign['timestamp'] }},
+        nonceStr: '{{ sign['nonceStr'] }}',
+        signature: '{{ sign['signature'] }}',
+        jsApiList: [
+            // 所有要调用的 API 都要加到这个列表中
+            'checkJsApi',
+            'updateAppMessageShareData'
+        ]
+    });
+
+    wx.ready(function () {
+        wx.checkJsApi({
+            jsApiList: ['updateAppMessageShareData'], // 需要检测的JS接口列表，所有JS接口列表见附录2,
+            success: function (res) {
+                // 以键值对的形式返回，可用的api值true，不可用为false
+                // 如：{"checkResult":{"chooseImage":true},"errMsg":"checkJsApi:ok"}
+                console.log(res)
+            }
+        });
+    });
+    wx.error(function (res) {
+        console.log(res)
+    })
+</script>
+</body>
+
+
+</html>

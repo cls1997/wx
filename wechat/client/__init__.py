@@ -1,4 +1,5 @@
 from wechat.client.api import (MediaAPI, JsSdkAPI)
+from wechat.client.api.menu import MenuAPI
 from wechat.client.base import BaseAPIClient
 
 __all__ = ['WechatAPIClient']
@@ -7,6 +8,7 @@ __all__ = ['WechatAPIClient']
 class WechatAPIClient(BaseAPIClient):
     media = MediaAPI()
     js_sdk = JsSdkAPI()
+    menu = MenuAPI()
 
     API_URL_PREFIX = 'https://api.weixin.qq.com/cgi-bin'
 
